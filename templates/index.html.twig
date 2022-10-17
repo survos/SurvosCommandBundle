@@ -1,0 +1,31 @@
+    {% extends 'base.html.twig' %}
+
+{% block title %}Commands{% endblock %}
+
+{% block body %}
+
+<div>
+    <table class="table table-striped">
+        <tbody>
+        {% for command in commands %}
+            {% set d = command.definition %}
+            <tr>
+                <td>
+                    <a href="{{ path('survos_command', {commandName: command.name}) }}">{{ command.name }}</a>
+                </td>
+                <td>
+                    {{ command.description }}
+                </td>
+                <td>
+                    {{ d.arguments|length }}
+                </td>
+                <td>
+                    {{ d.options|length }}
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+{% endblock %}

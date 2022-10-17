@@ -1,0 +1,11 @@
+{% extends 'layout.html.twig' %}
+
+{% block body %}
+
+    <h2>{{ command.name }} <i>{{ command.description }}</i></h2>
+
+    {{ form(form) }}
+
+    {{ dump(command) }}
+
+{% endblock %}

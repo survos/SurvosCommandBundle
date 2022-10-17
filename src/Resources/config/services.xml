@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- THIS IS NO LONGER NEEDED!!!  Everything is in PHP now. -->
+
+
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services
+        http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="survos.web-cli" class="Survos\WebCliBundle\Service\WebCliService"  />
+        <service id="Survos\WebCliBundle\Service\WebCliService" alias="survos.web-cli" />
+
+        <service id="Survos\WebCliBundle\Twig\WebCliTwigExtension" public="true" autowire="true">
+            <tag name="twig.extension" />
+        </service>
+
+    </services>
+</container>
