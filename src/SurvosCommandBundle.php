@@ -23,16 +23,21 @@ class SurvosCommandBundle extends AbstractBundle
             ->autowire('survos_command.twig', TwigExtension::class)
             ->addTag('twig.extension')
         ;
-
-        $serivceId = 'survos_command.command_controller';
-        $container->services()->alias(CommandController::class, $serivceId);
         $builder->autowire(CommandController::class)
-            ->setArgument('$kernel', new Reference('kernel'))
-            ->addTag('container.service_subscriber')
-            ->addTag('controller.service_arguments')
-            ->setPublic(true)
             ->setAutoconfigured(true)
+            ->setPublic(true)
         ;
+
+
+//        $serivceId = 'survos_command.command_controller';
+//        $container->services()->alias(CommandController::class, $serivceId);
+//        $builder->autowire(CommandController::class)
+//            ->setArgument('$kernel', new Reference('kernel'))
+//            ->addTag('container.service_subscriber')
+//            ->addTag('controller.service_arguments')
+//            ->setPublic(true)
+//            ->setAutoconfigured(true)
+//        ;
 
     }
 

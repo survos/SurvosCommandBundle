@@ -23,7 +23,7 @@ class CommandController extends AbstractController
     #[Route('/commands', name: 'command_list')]
     public function commands(): Response
     {
-        $commands = $this->application->all('app');
+        $commands = $this->application->all('survos:workflow');
         // from the bundle get the regex of allowable commands?
 
         return $this->render('@SurvosCommand/index.html.twig', [
@@ -43,12 +43,25 @@ class CommandController extends AbstractController
 
         $form = $this->createForm(CommandFormType::class, $defaults, ['command' => $command]);
         $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $output = new \Symfony\Component\Console\Output\BufferedOutput();
+
+            CommandRunner::from($application, $commandName)
+                ->withOutput($output) // any OutputInterface
+                ->run()
+            ;
+
+            $output->fetch(); // string (the output)
+            dd($output);
+
+                CommandRunner::for($command, 'Bob p@ssw0rd --role ROLE_ADMIN')->run(); // works great
+        }
 
 
 //        CommandRunner::from($application, 'my:command --help')
 //            ->run();
 //
-//        CommandRunner::for($command, 'Bob p@ssw0rd --role ROLE_ADMIN')->run(); // works great
 //        CommandRunner::for($command, '--help')->run(); // fails, says --help isn't defined
 
         return $this->render('@SurvosCommand/run.html.twig', [
