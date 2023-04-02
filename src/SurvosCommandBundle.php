@@ -26,7 +26,10 @@ class SurvosCommandBundle extends AbstractBundle
         $builder->autowire(CommandController::class)
             ->setAutoconfigured(true)
             ->setPublic(true)
+            ->setArgument('$namespaces', $config['namespaces'])
         ;
+
+
 
 
 //        $serivceId = 'survos_command.command_controller';
@@ -46,11 +49,18 @@ class SurvosCommandBundle extends AbstractBundle
         // since the configuration is short, we can add it here
         $definition->rootNode()
             ->children()
-                ->arrayNode('namespaces')
-                ->scalarPrototype()
-                ->end()->end()
-
-            ->end();
+            ->arrayNode('namespaces')
+            ->scalarPrototype()->end()
+            ->end()
+            ->end()
+//            ->arrayNode('namespaces')
+//                // ->addDefaultsIfNotSet()
+//                ->arrayPrototype()
+////                    ->addDefaultsIfNotSet()
+////                    ->children()
+////                        ->scalarNode('app')->end()
+//                ->end()
+//            ->end()
         ;
     }
 }

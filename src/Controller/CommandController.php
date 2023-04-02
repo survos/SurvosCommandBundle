@@ -5,6 +5,7 @@ namespace Survos\CommandBundle\Controller;
 use Survos\CommandBundle\Form\CommandFormType;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -15,7 +16,7 @@ class CommandController extends AbstractController
 {
 
     private Application $application;
-    public function __construct(private KernelInterface $kernel)
+    public function __construct(private KernelInterface $kernel, private array $namespaces)
     {
         $this->application = new Application($this->kernel);
     }
@@ -23,7 +24,10 @@ class CommandController extends AbstractController
     #[Route('/commands', name: 'command_list')]
     public function commands(): Response
     {
-        $commands = $this->application->all('survos:workflow');
+        $commands = [];
+        foreach ($this->namespaces as $namespace) {
+            $commands[$namespace] = $this->application->all($namespace);
+        }
         // from the bundle get the regex of allowable commands?
 
         return $this->render('@SurvosCommand/index.html.twig', [
@@ -35,27 +39,73 @@ class CommandController extends AbstractController
     public function runCommand(Request $request, KernelInterface $kernel, string $commandName): Response|array
     {
 //        $commandName = $request->get('commandName');
-
-        // load from request?
-        $defaults = (object)[];
         $application = new Application($kernel);
         $command = $application->get($commandName);
 
+        /** @var InputDefinition $defintion */
+        $defintion = $command->getDefinition();
+
+        $defaults = $request->query->all();
+
+//        $option = $defintion->getOption('createProjects');
+//        assert($option->getDefault() === true);
+//        dd($command::class, $defintion::class);
+
+        // load from request? for command?
+        foreach (array_merge($defintion->getArguments(), $defintion->getOptions()) as $cliArgument) {
+            $value = $defaults[$cliArgument->getName()]??null;
+            if (!$value) {
+                $defaults[$cliArgument->getName()] = $cliArgument->getDefault();
+            }
+        }
+
+        $cliString = $commandName;
+
         $form = $this->createForm(CommandFormType::class, $defaults, ['command' => $command]);
         $form->handleRequest($request);
+        $result = '';
         if ($form->isSubmitted() && $form->isValid()) {
-
             $output = new \Symfony\Component\Console\Output\BufferedOutput();
 
-            CommandRunner::from($application, $commandName)
-                ->withOutput($output) // any OutputInterface
-                ->run()
-            ;
+                $settings = $form->getData();
+                $cli[] = $commandName;
+                foreach ($defintion->getArguments() as $cliArgument) {
+                    $cli[] = $settings[$cliArgument->getName()];
+                }
+                foreach ($defintion->getOptions() as $cliOption) {
+                    $optionName = $cliOption->getName();
+                    $value = $settings[$optionName]; // @todo: arrays
+                    if ($cliOption->isValueOptional()) {
+                        dd($cliOption, $optionName, $value);
 
-            $output->fetch(); // string (the output)
-            dd($output);
+                    } elseif ($cliOption->isNegatable()) {
+                        if ($value) {
+                            $cli[] = '--' . $optionName;
+                        }
+//                        dd($cliOption, $optionName, $value);
 
-                CommandRunner::for($command, 'Bob p@ssw0rd --role ROLE_ADMIN')->run(); // works great
+                    } else {
+                        if ($value <> '') {
+                            $cli[] = '--' . $optionName . ' ' . $value;
+
+                        }
+
+                    }
+                }
+                $cliString = join(' ', $cli);
+                CommandRunner::from($application, $cliString)
+                    ->withOutput($output) // any OutputInterface
+                    ->run()
+                ;
+                $result = $output->fetch(); // string (the output)
+            try {
+            } catch (\Exception $exception) {
+                dd($cliString, $command, $application, $exception->getMessage());
+            }
+
+//            dd($output, $result);
+
+//                CommandRunner::for($command, 'Bob p@ssw0rd --role ROLE_ADMIN')->run(); // works great
         }
 
 
@@ -65,7 +115,9 @@ class CommandController extends AbstractController
 //        CommandRunner::for($command, '--help')->run(); // fails, says --help isn't defined
 
         return $this->render('@SurvosCommand/run.html.twig', [
+            'cliString' => $cliString,
             'form' => $form->createView(),
+            'result' => $result,
             'command' => $command
         ]);
     }

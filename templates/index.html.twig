@@ -7,6 +7,7 @@
 <div>
     <table class="table table-striped">
         <tbody>
+        {% for namespace, commands in commands %}
         {% for command in commands %}
             {% set d = command.definition %}
             <tr>
@@ -23,6 +24,7 @@
                     {{ d.options|length }}
                 </td>
             </tr>
+        {% endfor %}
         {% endfor %}
 
         </tbody>

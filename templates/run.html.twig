@@ -2,10 +2,14 @@
 
 {% block body %}
 
+    <a href="{{ path('survos_commands') }}">Return to Command List</a>
+
     <h2>{{ command.name }} <i>{{ command.description }}</i></h2>
 
-    {{ form(form) }}
+    <code>{{ cliString }}</code>
 
-    {{ dump(command) }}
+    {{ form(form) }}
+    <pre>{{ result }}</pre>
+
 
 {% endblock %}
