@@ -6,7 +6,7 @@
 
     <h2>{{ command.name }} <i>{{ command.description }}</i></h2>
 
-    <code>{{ cliString }}</code>
+    <textarea cols="90">bin/console {{ cliString }}</textarea>
 
     {{ form(form) }}
     <pre>{{ result }}</pre>
