@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,7 +23,7 @@ class CommandFormType extends AbstractType
             $builder
                 ->add($argument->getName(), null, [
                     'help' => $argument->getDescription(),
-                    'required' => false,
+                    'required' => true,
                     'attr' => [
                         'placeholder' => $argument->getDefault(),
 
@@ -32,7 +33,11 @@ class CommandFormType extends AbstractType
 
         foreach ($defintion->getOptions() as $option) {
             // no type?
-            if ($option->isNegatable()) {
+            if ($option->isArray()) {
+                $type = TextareaType::class;
+                dd($option);
+                continue; // @todo: add array to string converter, e.g.
+            } elseif ($option->isNegatable()) {
                 $type = CheckboxType::class;
             } elseif (is_int($option->getDefault())) {
                 $type = NumberType::class;
