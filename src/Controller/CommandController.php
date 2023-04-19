@@ -76,7 +76,7 @@ class CommandController extends AbstractController
                     $optionName = $cliOption->getName();
                     $value = $settings[$optionName]; // @todo: arrays
                     if ($cliOption->isValueOptional()) {
-                        dd($cliOption, $optionName, $value);
+//                        dd($cliOption, $optionName, $value);
 
                     } elseif ($cliOption->isNegatable()) {
                         if ($value) {
