@@ -33,6 +33,7 @@ class SurvosCommandBundle extends AbstractBundle
         $builder->autowire(DumpTranslationsCommand::class)
             ->setAutoconfigured(true)
             ->setPublic(true)
+            ->addTag('console.command')
             ->setArgument('$namespaces', $config['namespaces'])
             ->setArgument('$kernel', new Reference('kernel'))
         ;
