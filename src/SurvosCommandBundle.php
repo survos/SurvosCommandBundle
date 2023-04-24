@@ -2,6 +2,7 @@
 
 namespace Survos\CommandBundle;
 
+use Survos\CommandBundle\Command\DumpTranslationsCommand;
 use Survos\CommandBundle\Controller\CommandController;
 use Survos\CommandBundle\Twig\TwigExtension;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
@@ -29,6 +30,12 @@ class SurvosCommandBundle extends AbstractBundle
             ->setArgument('$namespaces', $config['namespaces'])
         ;
 
+        $builder->autowire(DumpTranslationsCommand::class)
+            ->setAutoconfigured(true)
+            ->setPublic(true)
+            ->setArgument('$namespaces', $config['namespaces'])
+            ->setArgument('$kernel', new Reference('kernel'))
+        ;
 
 
 
