@@ -23,7 +23,7 @@ class CommandFormType extends AbstractType
             $builder
                 ->add($argument->getName(), null, [
                     'help' => $argument->getDescription(),
-                    'required' => true,
+                    'required' => $argument->isRequired(),
                     'attr' => [
                         'placeholder' => $argument->getDefault(),
 
@@ -35,7 +35,8 @@ class CommandFormType extends AbstractType
             // no type?
             if ($option->isArray()) {
                 $type = TextareaType::class;
-                dd($option);
+                assert(false, 'option array not yet handled.');
+//                dd($option);
                 continue; // @todo: add array to string converter, e.g.
             } elseif ($option->isNegatable()) {
                 $type = CheckboxType::class;

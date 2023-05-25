@@ -42,6 +42,8 @@ class CommandController extends AbstractController
         $application = new Application($kernel);
         $command = $application->get($commandName);
 
+        chdir($kernel->getProjectDir());
+
         /** @var InputDefinition $defintion */
         $defintion = $command->getDefinition();
 
