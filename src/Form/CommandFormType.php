@@ -20,12 +20,13 @@ class CommandFormType extends AbstractType
         /** @var Command $command */
         $defintion = $command->getDefinition();
         foreach ($defintion->getArguments() as $argument) {
+            $default = $argument->getDefault();
             $builder
                 ->add($argument->getName(), null, [
                     'help' => $argument->getDescription(),
                     'required' => $argument->isRequired(),
                     'attr' => [
-                        'placeholder' => $argument->getDefault(),
+                        'placeholder' => is_array($default) ? join(',', $default) : $default,
 
                     ]
                 ]);
@@ -35,7 +36,7 @@ class CommandFormType extends AbstractType
             // no type?
             if ($option->isArray()) {
                 $type = TextareaType::class;
-                assert(false, 'option array not yet handled.');
+//                assert(false, 'option array not yet handled in ' . $option->getName());
 //                dd($option);
                 continue; // @todo: add array to string converter, e.g.
             } elseif ($option->isNegatable()) {
