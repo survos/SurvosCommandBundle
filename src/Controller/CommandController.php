@@ -16,6 +16,7 @@ class CommandController extends AbstractController
 {
 
     private Application $application;
+
     public function __construct(private KernelInterface $kernel, private array $namespaces)
     {
         $this->application = new Application($this->kernel);
@@ -55,11 +56,13 @@ class CommandController extends AbstractController
 
         // load from request? for command?
         foreach (array_merge($defintion->getArguments(), $defintion->getOptions()) as $cliArgument) {
-            $value = $defaults[$cliArgument->getName()]??null;
+            $value = $defaults[$cliArgument->getName()] ?? null;
             if (!$value) {
                 $defaults[$cliArgument->getName()] = $cliArgument->getDefault();
             }
         }
+
+//        dd($request);
 
         $cliString = $commandName;
 
@@ -69,37 +72,43 @@ class CommandController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $output = new \Symfony\Component\Console\Output\BufferedOutput();
 
-                $settings = $form->getData();
-                $cli[] = $commandName;
-                foreach ($defintion->getArguments() as $cliArgument) {
-                    $cli[] = $settings[$cliArgument->getName()];
-                }
-                foreach ($defintion->getOptions() as $cliOption) {
-                    $optionName = $cliOption->getName();
-                    $value = $settings[$optionName]; // @todo: arrays
-                    if ($cliOption->isValueOptional()) {
+            $settings = $form->getData();
+            $cli[] = $commandName;
+            foreach ($defintion->getArguments() as $cliArgument) {
+                $cli[] = $settings[$cliArgument->getName()];
+            }
+            foreach ($defintion->getOptions() as $cliOption) {
+                $optionName = $cliOption->getName();
+                $value = $settings[$optionName]; // @todo: arrays
+                if ($cliOption->isValueOptional()) {
 //                        dd($cliOption, $optionName, $value);
 
-                    } elseif ($cliOption->isNegatable()) {
-                        if ($value) {
-                            $cli[] = '--' . $optionName;
-                        }
+                } elseif ($cliOption->isNegatable()) {
+                    if ($value === true) {
+                        $cli[] = '--' . $optionName;
+                    } elseif ($value === false) {
+                        $cli[] = '--no-' . $optionName;
+                    }
 //                        dd($cliOption, $optionName, $value);
 
-                    } else {
-                        if ($value <> '') {
-                            $cli[] = '--' . $optionName . ' ' . $value;
-
-                        }
-
+                } else {
+                    if ($value <> '' && !is_bool($value)) {
+                        $cli[] = '--' . $optionName . ' ' . $value;
                     }
                 }
-                $cliString = join(' ', $cli);
+            }
+
+            $cliString = join(' ', $cli);
+
+            $result = null;
+
+            if (!$form->get('dryRun')->getData()) {
                 CommandRunner::from($application, $cliString)
                     ->withOutput($output) // any OutputInterface
-                    ->run()
-                ;
-                $result = $output->fetch(); // string (the output)
+                    ->run();
+                $result = $output->fetch();
+            }
+
             try {
             } catch (\Exception $exception) {
                 dd($cliString, $command, $application, $exception->getMessage());

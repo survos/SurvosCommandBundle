@@ -4,8 +4,11 @@ namespace Survos\CommandBundle\Form;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -33,6 +36,7 @@ class CommandFormType extends AbstractType
         }
 
         foreach ($defintion->getOptions() as $option) {
+            $conf = null;
             // no type?
             if ($option->isArray()) {
                 $type = TextareaType::class;
@@ -40,21 +44,58 @@ class CommandFormType extends AbstractType
 //                dd($option);
                 continue; // @todo: add array to string converter, e.g.
             } elseif ($option->isNegatable()) {
+                $type = ChoiceType::class;
+                $choiceValue = null;
+                $required = false;
+
+                if (is_bool($option->getDefault())) {
+                    $choiceValue = ($option->getDefault() ? '--' . $option->getName() : '--no-' . $option->getName());
+                    $required = true;
+                }
+
+                $conf = [
+                    'help' => $option->getDescription(),
+                    'choices' => [
+                        '--' . $option->getName() => true,
+                        '--no-' . $option->getName() => false,
+                    ],
+                    'data' => $option->getDefault(),
+                    'expanded' => true,
+                    'required' => $required,
+                    'attr' => [
+                        'placeholder' => $choiceValue,
+                        'style' => 'display:flex; gap: 1em;'
+                    ],
+                ];
+            } elseif (is_bool($option->getDefault())) {
                 $type = CheckboxType::class;
             } elseif (is_int($option->getDefault())) {
                 $type = NumberType::class;
             } else {
                 $type = TextType::class;
             }
-            $builder
-                ->add($option->getName(), $type, [
-                    'help' => $option->getDescription(),
-                    'required' => false,
-                    'attr' => [
-                        'placeholder' => $option->getDefault(),
-                    ]
-                ]);
+
+            if ($conf) {
+                $builder
+                    ->add($option->getName(), $type, $conf);
+            } else {
+                $builder
+                    ->add($option->getName(), $type, [
+                        'help' => $option->getDescription(),
+                        'required' => false,
+                        'attr' => [
+                            'placeholder' => $option->getDefault(),
+                        ]
+                    ]);
+            }
         }
+
+        $builder->add('dryRun', CheckboxType::class, [
+            'label' => 'Dry run',
+            'help' => 'Run Command in dry run mode',
+            'data' => false,
+            'required' => false,
+        ]);
 
         $builder->add('submit', SubmitType::class, [
             'label' => 'Run Command'
