@@ -76,7 +76,6 @@ class CommandController extends AbstractController
             $settings = $form->getData();
             $cli[] = $commandName;
             foreach ($definition->getArguments() as $cliArgument) {
-                dd($settings, $cliArgument);
                 $cli[] = $settings[$cliArgument->getName()];
             }
             foreach ($definition->getOptions() as $cliOption) {
