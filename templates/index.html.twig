@@ -8,20 +8,29 @@
     <table class="table table-striped">
         <tbody>
         {% for namespace, commands in commands %}
-        {% for command in commands %}
+        {% for commandCode, command in commands %}
             {% set d = command.definition %}
             <tr>
                 <td>
-                    <a href="{{ path('survos_command', {commandName: command.name}) }}">{{ command.name }}</a>
+                    <a href="{{ path('survos_command', {commandName: command.name}) }}">{{ commandCode }}</a>
                 </td>
                 <td>
                     {{ command.description }}
                 </td>
                 <td>
-                    {{ d.arguments|length }}
+                        {% for arg in d.arguments %}
+                            {{ arg.name }}
+{#                            <li>#}
+{#                                {{ arg.name }}#}
+{#                                <i>{{ arg.description }}</i>#}
+
+{#                            </li>#}
+                        {% endfor %}
                 </td>
                 <td>
-                    {{ d.options|length }}
+                    {% for option in d.options %}
+                        --{{ option.name }}<br />
+                    {% endfor %}
                 </td>
             </tr>
         {% endfor %}

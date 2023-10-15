@@ -30,7 +30,6 @@ class CommandController extends AbstractController
             $commands[$namespace] = $this->application->all($namespace);
         }
         // from the bundle get the regex of allowable commands?
-
         return $this->render('@SurvosCommand/index.html.twig', [
             'commands' => $commands
         ]);
