@@ -45,17 +45,18 @@ class CommandController extends AbstractController
 
         chdir($kernel->getProjectDir());
 
-        /** @var InputDefinition $defintion */
-        $defintion = $command->getDefinition();
+        /** @var InputDefinition $definition */
+        $definition = $command->getDefinition();
 
+        // so we can preset some options in the querystring
         $defaults = $request->query->all();
 
-//        $option = $defintion->getOption('createProjects');
+//        $option = $definition->getOption('createProjects');
 //        assert($option->getDefault() === true);
-//        dd($command::class, $defintion::class);
+//        dd($command::class, $definition::class);
 
         // load from request? for command?
-        foreach (array_merge($defintion->getArguments(), $defintion->getOptions()) as $cliArgument) {
+        foreach (array_merge($definition->getArguments(), $definition->getOptions()) as $cliArgument) {
             $value = $defaults[$cliArgument->getName()] ?? null;
             if (!$value) {
                 $defaults[$cliArgument->getName()] = $cliArgument->getDefault();
@@ -74,14 +75,17 @@ class CommandController extends AbstractController
 
             $settings = $form->getData();
             $cli[] = $commandName;
-            foreach ($defintion->getArguments() as $cliArgument) {
+            foreach ($definition->getArguments() as $cliArgument) {
+                dd($settings, $cliArgument);
                 $cli[] = $settings[$cliArgument->getName()];
             }
-            foreach ($defintion->getOptions() as $cliOption) {
+            foreach ($definition->getOptions() as $cliOption) {
                 $optionName = $cliOption->getName();
                 $value = $settings[$optionName]; // @todo: arrays
                 if ($cliOption->isValueOptional()) {
-//                        dd($cliOption, $optionName, $value);
+                    if ($value) {
+                        $cli[] = '--' . $optionName . ' ' . $value;
+                    }
 
                 } elseif ($cliOption->isNegatable()) {
                     if ($value === true) {
@@ -89,8 +93,6 @@ class CommandController extends AbstractController
                     } elseif ($value === false) {
                         $cli[] = '--no-' . $optionName;
                     }
-//                        dd($cliOption, $optionName, $value);
-
                 } else {
                     if ($value <> '' && !is_bool($value)) {
                         $cli[] = '--' . $optionName . ' ' . $value;
@@ -99,7 +101,6 @@ class CommandController extends AbstractController
             }
 
             $cliString = join(' ', $cli);
-
             $result = null;
 
             if (!$form->get('dryRun')->getData()) {
@@ -113,8 +114,6 @@ class CommandController extends AbstractController
             } catch (\Exception $exception) {
                 dd($cliString, $command, $application, $exception->getMessage());
             }
-
-//            dd($output, $result);
 
 //                CommandRunner::for($command, 'Bob p@ssw0rd --role ROLE_ADMIN')->run(); // works great
         }
