@@ -40,13 +40,34 @@ With dumps and asserts, this is even more helpful.
 symfony new --demo command-demo && cd command-demo
 # bump to the latest version of Symfony 6.3, use whatever version of you have installed
 sed -i 's/"php": "8.1.0"//' composer.json 
-composer config extra symfony.require "^6.3"
+sed -i 's/"require": "6.3"/"require": "^6.3"/' composer.json
 composer config extra.symfony.allow-contrib true
 composer update 
 # allow recipes, waiting for PR approval
 export SYMFONY_ENDPOINT=https://raw.githubusercontent.com/symfony/recipes-contrib/flex/pull-1548/index.json
 
 composer req survos/command-bundle
+bin/console --version
+
+yarn install && yarn dev
+symfony server:start -d
+symfony open:local  --path admin/commands
+```
+
+```bash
+symfony new command-demo-64 --webapp --version=next && cd command-demo-64 
+composer config extra.symfony.allow-contrib true
+bin/console --version
+export SYMFONY_ENDPOINT=https://raw.githubusercontent.com/symfony/recipes/flex/pull-1245/index.json
+composer req symfony/asset-mapper:^6.4
+composer req symfony/stimulus-bundle:2.x-dev
+bin/console --version
+
+export SYMFONY_ENDPOINT=https://raw.githubusercontent.com/symfony/recipes-contrib/flex/pull-1548/index.json
+composer req survos/command-bundle
+yarn install && yarn dev
+symfony server:start -d
+symfony open:local  --path admin/commands
 ```
 
 Now go to /admin/commands
