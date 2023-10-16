@@ -80,11 +80,11 @@ class CommandController extends AbstractController
             foreach ($definition->getOptions() as $cliOption) {
                 $optionName = $cliOption->getName();
                 $value = $settings[$optionName]; // @todo: arrays
+                dump($optionName, $value, $cliOption);
                 if ($cliOption->isValueOptional()) {
                     if ($value) {
                         $cli[] = '--' . $optionName . ' ' . $value;
                     }
-
                 } elseif ($cliOption->isNegatable()) {
                     if ($value === true) {
                         $cli[] = '--' . $optionName;
@@ -94,6 +94,8 @@ class CommandController extends AbstractController
                 } else {
                     if ($value <> '' && !is_bool($value)) {
                         $cli[] = '--' . $optionName . ' ' . $value;
+                    } elseif ($value)  {
+                        $cli[] = '--' . $optionName;
                     }
                 }
             }
