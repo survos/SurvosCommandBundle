@@ -39,13 +39,12 @@ With dumps and asserts, this is even more helpful.
 ```bash
 symfony new --demo command-demo && cd command-demo
 # bump to the latest version of Symfony 6.3, use whatever version of you have installed
+git clone git@github.com:tacman/symfony-demo.git
 sed -i 's/"php": "8.1.0"//' composer.json 
-sed -i 's/"require": "6.3"/"require": "^6.3"/' composer.json
+sed -i 's/"require": "6.3.*"/"require": "^6.4"/' composer.json
+composer config minimum-stability dev
 composer config extra.symfony.allow-contrib true
 composer update 
-# allow recipes, waiting for PR approval
-export SYMFONY_ENDPOINT=https://raw.githubusercontent.com/symfony/recipes-contrib/flex/pull-1548/index.json
-
 composer req survos/command-bundle
 bin/console --version
 
@@ -54,18 +53,40 @@ symfony server:start -d
 symfony open:local  --path admin/commands
 ```
 
+## Example with a new 6.4 Project and Bootstrap (no build step)
+
 ```bash
-symfony new command-demo-64 --webapp --version=next && cd command-demo-64 
+symfony new command-64 --webapp --version=next && cd command-64 
+composer config minimum-stability dev
 composer config extra.symfony.allow-contrib true
-bin/console --version
-export SYMFONY_ENDPOINT=https://raw.githubusercontent.com/symfony/recipes/flex/pull-1245/index.json
+sed -i 's/"php": "8.1.0"//' composer.json 
 composer req symfony/asset-mapper:^6.4
 composer req symfony/stimulus-bundle:2.x-dev
+bin/console make:controller -i AppController
+symfony server:start -d
+symfony open:local --path=/app
 bin/console --version
 
-export SYMFONY_ENDPOINT=https://raw.githubusercontent.com/symfony/recipes-contrib/flex/pull-1548/index.json
 composer req survos/command-bundle
-yarn install && yarn dev
+bin/console make:command app:test
+bin/console make:command app:import
+
+# make it prettier with bootstrap, but not necessary
+bin/console importmap:require bootstrap
+echo "import 'bootstrap/dist/css/bootstrap.min.css'" >> assets/app.js
+
+cat > config/packages/twig.yaml << END
+twig:
+    default_path: '%kernel.project_dir%/templates'
+    form_themes:
+        - 'bootstrap_5_layout.html.twig'
+        - 'bootstrap_5_horizontal_layout.html.twig'
+
+when@test:
+    twig:
+        strict_variables: true
+END
+
 symfony server:start -d
 symfony open:local  --path admin/commands
 ```

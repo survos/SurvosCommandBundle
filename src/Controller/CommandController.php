@@ -25,6 +25,7 @@ class CommandController extends AbstractController
     #[Route('/commands', name: 'command_list')]
     public function commands(): Response
     {
+
         $commands = [];
         foreach ($this->namespaces as $namespace) {
             $commands[$namespace] = $this->application->all($namespace);
