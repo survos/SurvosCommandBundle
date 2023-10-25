@@ -57,6 +57,7 @@ class SurvosCommandBundle extends AbstractBundle
         // since the configuration is short, we can add it here
         $definition->rootNode()
             ->children()
+            ->scalarNode('base_layout')->defaultValue('base.html.twig')->end()
             ->arrayNode('namespaces')
             ->scalarPrototype()->end()
             ->end()
