@@ -91,6 +91,29 @@ symfony server:start -d
 symfony open:local  --path admin/commands
 ```
 
+## Example with Symfony 7
+## Example with a new 6.4 Project and Bootstrap (no build step)
+
+```bash
+symfony new command-7 --webapp --version=next --php=8.2 && cd command-7
+composer config minimum-stability dev
+composer config prefer-stable false
+composer config extra.symfony.allow-contrib true
+sed -i 's/"6.4.*"/"^7.0"/' composer.json
+composer update
+composer config repositories.knp_menu_bundle '{"type": "vcs", "url": "git@github.com:tacman/KnpMenuBundle.git"}'
+composer require knplabs/knp-menu-bundle
+
+composer req zenstruck/console-extra
+composer req survos/command-bundle
+composer req symfony/asset-mapper:^6.4
+composer req symfony/stimulus-bundle:2.x-dev
+bin/console make:controller -i AppController
+symfony server:start -d
+symfony open:local --path=/app
+bin/console --version
+
+
 Now go to /admin/commands
 
 ## Using Invokable Commands
