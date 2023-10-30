@@ -95,12 +95,27 @@ symfony open:local  --path admin/commands
 ## Example with a new 6.4 Project and Bootstrap (no build step)
 
 ```bash
-symfony new command-7 --webapp --version=next --php=8.2 && cd command-7
+symfony new test-7 --version=next --php=8.2 && cd test-7
 composer config minimum-stability dev
 composer config prefer-stable false
 composer config extra.symfony.allow-contrib true
 sed -i 's/"6.4.*"/"^7.0"/' composer.json
 composer update
+composer req doctrine/orm:^2.16-dev doctrine/doctrine-bundle:^2.11-dev symfony/twig-bundle -w
+composer require stof/doctrine-extensions-bundle:^1.8
+
+composer config repositories.knp_menu_bundle '{"type": "vcs", "url": "git@github.com:tacman/KnpMenuBundle.git"}'
+composer require knplabs/knp-menu-bundle
+composer require --dev symfony/profiler-pack
+
+
+composer req symfony/maker-bundle symfony/debug-bundle --dev
+bin/console make:controller -i AppController
+symfony server:start -d
+symfony open:local --path=/app
+
+echo "DATABASE_URL=sqlite:///%kernel.project_dir%/var/data.db" > .env.local
+symfony new command-7 --webapp --version=next --php=8.2 && cd command-7
 composer config repositories.knp_menu_bundle '{"type": "vcs", "url": "git@github.com:tacman/KnpMenuBundle.git"}'
 composer require knplabs/knp-menu-bundle
 
