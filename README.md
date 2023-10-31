@@ -96,17 +96,24 @@ symfony open:local  --path admin/commands
 
 ```bash
 symfony new test-7 --version=next --php=8.2 && cd test-7
+sed -i 's/"6.4.*"/"^7.0"/' composer.json
 composer config minimum-stability dev
 composer config prefer-stable false
 composer config extra.symfony.allow-contrib true
-sed -i 's/"6.4.*"/"^7.0"/' composer.json
 composer update
+composer config repositories.knp_menu_bundle '{"type": "vcs", "url": "git@github.com:tacman/KnpMenuBundle.git"}'
+composer require knplabs/knp-menu-bundle
+composer req survos/bootstrap-bundle
+composer req symfony/maker-bundle symfony/debug-bundle --dev
+bin/console make:controller -i AppController
+symfony server:start -d
+symfony open:local --path=/app
+
+composer require --dev symfony/profiler-pack
+
 composer req doctrine/orm:^2.16-dev doctrine/doctrine-bundle:^2.11-dev symfony/twig-bundle -w
 composer require stof/doctrine-extensions-bundle:^1.8
 
-composer config repositories.knp_menu_bundle '{"type": "vcs", "url": "git@github.com:tacman/KnpMenuBundle.git"}'
-composer require knplabs/knp-menu-bundle
-composer require --dev symfony/profiler-pack
 
 
 composer req symfony/maker-bundle symfony/debug-bundle --dev
