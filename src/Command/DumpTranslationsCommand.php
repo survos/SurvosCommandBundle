@@ -2,17 +2,9 @@
 
 namespace Survos\CommandBundle\Command;
 
-use Roave\BetterReflection\Reflection\Adapter\ReflectionClass;
-use SebastianBergmann\Diff\Differ;
-use Survos\Bundle\MakerBundle\Service\MakerService;
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\StreamableInputInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
-use Twig\Environment;
-use Zenstruck\Console\Attribute\Argument;
 use Zenstruck\Console\Attribute\Option;
 use Zenstruck\Console\ConfigureWithAttributes;
 use Zenstruck\Console\InvokableServiceCommand;
@@ -30,13 +22,13 @@ final class DumpTranslationsCommand extends InvokableServiceCommand
 
     private Application $application;
 
-    public function __construct(private KernelInterface $kernel,
-                                private array $namespaces, // injected from the bundle config
-                                string $name = null)
-    {
-        $this->application = new Application($this->kernel);
-        parent::__construct($name);
-    }
+        public function __construct(private KernelInterface $kernel,
+                                    private array $namespaces, // injected from the bundle config
+                                    string $name = null)
+        {
+            $this->application = new Application($this->kernel);
+            parent::__construct($name);
+        }
 
     public function __invoke(
         IO $io,
