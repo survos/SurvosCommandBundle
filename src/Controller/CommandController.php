@@ -11,13 +11,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Zenstruck\Console\CommandRunner;
+use Symfony\Component\Console\Messenger\RunCommandMessage;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class CommandController extends AbstractController
 {
 
     private Application $application;
 
-    public function __construct(private KernelInterface $kernel, private array $namespaces)
+    public function __construct(private KernelInterface $kernel,
+                                private MessageBusInterface $bus,
+                                private array $namespaces,
+                                private array $config)
     {
         $this->application = new Application($this->kernel);
     }
@@ -54,7 +59,15 @@ class CommandController extends AbstractController
 //        $option = $definition->getOption('createProjects');
 //        assert($option->getDefault() === true);
 //        dd($command::class, $definition::class);
-
+        if(isset($defaults['reset'])) {
+            $defaults['reset'] = filter_var($defaults['reset'], FILTER_VALIDATE_BOOLEAN);
+        }
+        if(isset($defaults['dryRun'])) {
+            $defaults['dryRun'] = filter_var($defaults['dryRun'], FILTER_VALIDATE_BOOLEAN);
+        }
+        if(isset($defaults['asMessage'])) {
+            $defaults['asMessage'] = filter_var($defaults['asMessage'], FILTER_VALIDATE_BOOLEAN);
+        }
         // load from request? for command?
         foreach (array_merge($definition->getArguments(), $definition->getOptions()) as $cliArgument) {
             $value = $defaults[$cliArgument->getName()] ?? null;
@@ -103,13 +116,16 @@ class CommandController extends AbstractController
             $cliString = join(' ', $cli);
             $result = null;
 
-            if (!$form->get('dryRun')->getData()) {
+            if ($form->get('asMessage')->getData()) {
+                $envelope = $this->bus->dispatch(new RunCommandMessage($cliString));
+                dump($envelope);
+                $result = "$cliString dispatched ";
+            } else {
                 CommandRunner::from($application, $cliString)
                     ->withOutput($output) // any OutputInterface
                     ->run();
                 $result = $output->fetch();
             }
-
             try {
             } catch (\Exception $exception) {
                 dd($cliString, $command, $application, $exception->getMessage());
@@ -117,7 +133,6 @@ class CommandController extends AbstractController
 
 //                CommandRunner::for($command, 'Bob p@ssw0rd --role ROLE_ADMIN')->run(); // works great
         }
-
 
 //        CommandRunner::from($application, 'my:command --help')
 //            ->run();

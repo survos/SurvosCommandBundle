@@ -90,10 +90,9 @@ class CommandFormType extends AbstractType
             }
         }
 
-        $builder->add('dryRun', CheckboxType::class, [
-            'label' => 'Dry run',
-            'help' => 'Run Command in dry run mode',
-            'data' => false,
+        $builder->add('asMessage', CheckboxType::class, [
+            'label' => 'Via Message Bus',
+            'help' => 'Run Command via consume:messages',
             'required' => false,
         ]);
 
