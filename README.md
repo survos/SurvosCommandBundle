@@ -6,7 +6,7 @@ Run Symfony command line programs from a web interface, for easier debugging.
 
 Use assert(), dump() and dd() are quick and easy debug tools when debugging a Symfony web page.  But it's often difficult to use with console commands.
 
-For example, in the official Symfony Demo, there is a command to send the list of users to an email address.
+For example, in the official Symfony Demo, there is a command to send the list of users to an email  address.
 
 ```bash
 bin/console app:list-users --send-to=admin@example.com
@@ -56,7 +56,7 @@ symfony open:local  --path admin/commands
 ## Example with a new 6.4 Project and Bootstrap (no build step)
 
 ```bash
-symfony new command-64 --webapp --version=next && cd command-64 
+symfony new command-64 --webapp && cd command-64 
 composer config minimum-stability dev
 composer config extra.symfony.allow-contrib true
 sed -i 's/"php": "8.1.0"//' composer.json 
@@ -200,3 +200,43 @@ final class ListPostsCommand extends InvokableServiceCommand
 }
 END
 ```
+
+## with castor
+
+```bash
+symfony new castor-command-demo --webapp && cd castor-command-demo
+sed -i "s|# MAILER_DSN|MAILER_DSN|" .env
+bin/console make:command app:castor-test
+cat > castor.php <<'END'
+<?php
+
+use Castor\Attribute\AsTask;
+
+use function Castor\io;
+use function Castor\capture;
+use function Castor\import;
+
+import(__DIR__ . '/src/Command/CastorTestCommand.php');
+
+#[AsTask(description: 'Welcome to Castor!')]
+function hello(): void
+{
+    $currentUser = capture('whoami');
+
+    io()->title(sprintf('Hello %s!', $currentUser));
+}
+END
+
+
+```
+
+Add attribute to AppCastorTest.php
+
+```php
+#[\Castor\Attribute\AsSymfonyTask()]
+```
+
+```bash
+castor list
+```
+
