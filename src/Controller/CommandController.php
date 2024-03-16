@@ -20,9 +20,9 @@ class CommandController extends AbstractController
     private Application $application;
 
     public function __construct(private KernelInterface $kernel,
-                                private MessageBusInterface $bus,
-                                private array $namespaces,
-                                private array $config)
+                                private ?MessageBusInterface $bus=null,
+                                private array $namespaces=[],
+                                private array $config=[])
     {
         $this->application = new Application($this->kernel);
     }
@@ -80,7 +80,7 @@ class CommandController extends AbstractController
 
         $cliString = $commandName;
 
-        $form = $this->createForm(CommandFormType::class, $defaults, ['command' => $command]);
+        $form = $this->createForm(CommandFormType::class, $defaults, ['command' => $command, 'hasBus' => (bool)$this->bus]);
         $form->handleRequest($request);
         $result = '';
         if ($form->isSubmitted() && $form->isValid()) {

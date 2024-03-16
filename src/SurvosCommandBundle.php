@@ -7,6 +7,7 @@ use Survos\CommandBundle\Controller\CommandController;
 use Survos\CommandBundle\Twig\TwigExtension;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\Bundle\AbstractBundle;
@@ -27,7 +28,7 @@ class SurvosCommandBundle extends AbstractBundle
         $builder->autowire(CommandController::class)
             ->setAutoconfigured(true)
             ->setPublic(true)
-            ->setArgument('$bus', new Reference('messenger.default_bus'))
+            ->setArgument('$bus', new Reference('messenger.default_bus', ContainerInterface::NULL_ON_INVALID_REFERENCE))
             ->setArgument('$namespaces', $config['namespaces'])
             ->setArgument('$config', $config)
         ;

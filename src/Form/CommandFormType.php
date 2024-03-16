@@ -90,11 +90,13 @@ class CommandFormType extends AbstractType
             }
         }
 
-        $builder->add('asMessage', CheckboxType::class, [
-            'label' => 'Via Message Bus',
-            'help' => 'Run Command via consume:messages',
-            'required' => false,
-        ]);
+        if ($options['hasBus']) {
+            $builder->add('asMessage', CheckboxType::class, [
+                'label' => 'Via Message Bus',
+                'help' => 'Run Command via consume:messages',
+                'required' => false,
+            ]);
+        }
 
         $builder->add('submit', SubmitType::class, [
             'label' => 'Run Command'
@@ -106,6 +108,7 @@ class CommandFormType extends AbstractType
     {
         $resolver->setDefaults([
             'command' => null,
+            'hasBus' => false,
 //            'data_class' => Command::class
             // Configure your form options here
         ]);
