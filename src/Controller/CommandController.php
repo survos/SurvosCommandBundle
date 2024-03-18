@@ -106,7 +106,13 @@ class CommandController extends AbstractController
                     }
                 } else {
                     if ($value <> '' && !is_bool($value)) {
-                        $cli[] = '--' . $optionName . ' ' . $value;
+                        if (is_array($value)) {
+                            foreach ($value as $valueItem) {
+                                $cli[] = '--' . $optionName . ' ' . $valueItem;
+                            }
+                        } else {
+                            $cli[] = '--' . $optionName . ' ' . $value;
+                        }
                     } elseif ($value)  {
                         $cli[] = '--' . $optionName;
                     }
