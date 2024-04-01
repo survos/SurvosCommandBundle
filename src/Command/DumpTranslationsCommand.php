@@ -16,7 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 #[AsCommand('survos:command:dump-as-messages', 'Dump the command descriptions as a message for file translations')]
 final class DumpTranslationsCommand extends InvokableServiceCommand
 {
-    use ConfigureWithAttributes;
     use RunsCommands;
     use RunsProcesses;
 
