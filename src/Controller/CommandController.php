@@ -89,14 +89,14 @@ class CommandController extends AbstractController
             $settings = $form->getData();
             $cli[] = $commandName;
             foreach ($definition->getArguments() as $cliArgument) {
-                $cli[] = $settings[$cliArgument->getName()];
+                $cli[] = sprintf('"%s"', $settings[$cliArgument->getName()]);
             }
             foreach ($definition->getOptions() as $cliOption) {
                 $optionName = $cliOption->getName();
                 $value = $settings[$optionName]; // @todo: arrays
                 if ($cliOption->isValueOptional()) {
                     if ($value) {
-                        $cli[] = '--' . $optionName . ' ' . $value;
+                        $cli[] = '--' . $optionName . ' ' . sprintf('"%s"', $value);
                     }
                 } elseif ($cliOption->isNegatable()) {
                     if ($value === true) {
@@ -111,7 +111,7 @@ class CommandController extends AbstractController
                                 $cli[] = '--' . $optionName . ' ' . $valueItem;
                             }
                         } else {
-                            $cli[] = '--' . $optionName . ' ' . $value;
+                            $cli[] = '--' . $optionName . ' ' . sprintf('"%s"', $value);
                         }
                     } elseif ($value)  {
                         $cli[] = '--' . $optionName;
@@ -127,9 +127,13 @@ class CommandController extends AbstractController
                 dump($envelope);
                 $result = "$cliString dispatched ";
             } else {
-                CommandRunner::from($application, $cliString)
-                    ->withOutput($output) // any OutputInterface
-                    ->run();
+                    CommandRunner::from($application, $cliString)
+                        ->withOutput($output) // any OutputInterface
+                        ->run();
+                try {
+                } catch (\Exception $exception) {
+                    dd($cliString, $exception->getMessage());
+                }
                 $result = $output->fetch();
             }
             try {
