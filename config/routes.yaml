@@ -1,0 +1,6 @@
+survos_command:
+  prefix: /command
+  type: attribute
+  resource:
+    path: '@SurvosCommandBundle/src/Controller/'
+    namespace: Survos\CommandBundle\Controller
