@@ -89,14 +89,14 @@ class CommandController extends AbstractController
             $settings = $form->getData();
             $cli[] = $commandName;
             foreach ($definition->getArguments() as $cliArgument) {
-                $cli[] = sprintf('"%s"', $settings[$cliArgument->getName()]);
+                $cli[] = $this->quotify($settings[$cliArgument->getName()]);
             }
             foreach ($definition->getOptions() as $cliOption) {
                 $optionName = $cliOption->getName();
                 $value = $settings[$optionName]; // @todo: arrays
                 if ($cliOption->isValueOptional()) {
                     if ($value) {
-                        $cli[] = '--' . $optionName . ' ' . sprintf('"%s"', $value);
+                        $cli[] = '--' . $optionName . ' ' . $this->quotify($value);
                     }
                 } elseif ($cliOption->isNegatable()) {
                     if ($value === true) {
@@ -111,7 +111,7 @@ class CommandController extends AbstractController
                                 $cli[] = '--' . $optionName . ' ' . $valueItem;
                             }
                         } else {
-                            $cli[] = '--' . $optionName . ' ' . sprintf('"%s"', $value);
+                            $cli[] = '--' . $optionName . ' ' . $this->quotify($value);
                         }
                     } elseif ($value)  {
                         $cli[] = '--' . $optionName;
@@ -155,5 +155,11 @@ class CommandController extends AbstractController
             'result' => $result,
             'command' => $command
         ]);
+    }
+
+    private function quotify(string|int|null $value): string
+
+    {
+        return str_contains($value, ' ') ? sprintf('"%s"', $value) : (string)$value;
     }
 }
