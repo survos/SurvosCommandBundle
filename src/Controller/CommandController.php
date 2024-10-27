@@ -27,7 +27,7 @@ class CommandController extends AbstractController
         $this->application = new Application($this->kernel);
     }
 
-    #[Route('/commands', name: 'command_list')]
+    #[Route('/commands', name: 'survos_commands')]
     public function commands(): Response
     {
 
@@ -41,7 +41,7 @@ class CommandController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/run-command/{commandName}', name: 'run_command')]
+    #[Route(path: '/run-command/{commandName}', name: 'survos_command')]
     public function runCommand(Request $request, KernelInterface $kernel, string $commandName): Response|array
     {
 //        $commandName = $request->get('commandName');
