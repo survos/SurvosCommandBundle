@@ -4,40 +4,40 @@
 
 {% block body %}
 
-    <button class="btn btn-danger">danger</button>
-<div>
-    <table class="table table-striped">
-        <tbody>
-        {% for namespace, commands in commands %}
-        {% for commandCode, command in commands %}
-            {% set d = command.definition %}
-            <tr>
-                <td>
-                    <a href="{{ path('survos_command', {commandName: command.name}) }}">{{ commandCode }}</a>
-                </td>
-                <td>
-                    {{ command.description }}
-                </td>
-                <td>
-                        {% for arg in d.arguments %}
-                            {{ arg.name }}
-{#                            <li>#}
-{#                                {{ arg.name }}#}
-{#                                <i>{{ arg.description }}</i>#}
+    <div>
+        <table class="table table-striped">
+            <tbody>
+            {% for namespace, commands in commands %}
+                <h3>{{ namespace }}</h3>
+                {% for commandCode, command in commands %}
+                    {% set d = command.definition %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('survos_command', {commandName: command.name}) }}">{{ commandCode }}</a>
+                        </td>
+                        <td>
+                            {{ command.description }}
+                        </td>
+                        <td>
+                            {% for arg in d.arguments %}
+                                {{ arg.name }}
+                                {#                            <li> #}
+                                {#                                {{ arg.name }} #}
+                                {#                                <i>{{ arg.description }}</i> #}
 
-{#                            </li>#}
-                        {% endfor %}
-                </td>
-                <td>
-                    {% for option in d.options %}
-                        --{{ option.name }}<br />
-                    {% endfor %}
-                </td>
-            </tr>
-        {% endfor %}
-        {% endfor %}
+                                {#                            </li> #}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for option in d.options %}
+                                --{{ option.name }}<br/>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
 
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

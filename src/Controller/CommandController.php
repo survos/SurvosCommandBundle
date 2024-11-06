@@ -6,6 +6,7 @@ use Survos\CommandBundle\Form\CommandFormType;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -84,7 +85,7 @@ class CommandController extends AbstractController
         $form->handleRequest($request);
         $result = '';
         if ($form->isSubmitted() && $form->isValid()) {
-            $output = new \Symfony\Component\Console\Output\BufferedOutput();
+            $output = new BufferedOutput();
 
             $settings = $form->getData();
             $cli[] = $commandName;
@@ -120,16 +121,16 @@ class CommandController extends AbstractController
             }
 
             $cliString = join(' ', $cli);
-            $result = null;
-
             if ($form->get('asMessage')->getData()) {
                 $envelope = $this->bus->dispatch(new RunCommandMessage($cliString));
                 dump($envelope);
                 $result = "$cliString dispatched ";
             } else {
+                dump($application, $cliString);
                     CommandRunner::from($application, $cliString)
                         ->withOutput($output) // any OutputInterface
                         ->run();
+                    dd($output);
                 try {
                 } catch (\Exception $exception) {
                     dd($cliString, $exception->getMessage());

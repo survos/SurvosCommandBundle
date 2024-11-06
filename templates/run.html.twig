@@ -2,14 +2,18 @@
 
 {% block body %}
 
+    {{ form_start(form) }}
+    <input type="submit" value="run" />
     <a href="{{ path('survos_commands') }}">Return to Command List</a>
 
     <h2>{{ command.name }} <i>{{ command.description }}</i></h2>
 
     <textarea cols="90">bin/console {{ cliString }}</textarea>
 
-    {{ form(form) }}
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
     <pre>{{ result }}</pre>
+    {{ dump(result) }}
 
 
 {% endblock %}
