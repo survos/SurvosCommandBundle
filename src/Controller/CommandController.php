@@ -126,11 +126,10 @@ class CommandController extends AbstractController
                 dump($envelope);
                 $result = "$cliString dispatched ";
             } else {
-                dump($application, $cliString);
                     CommandRunner::from($application, $cliString)
                         ->withOutput($output) // any OutputInterface
                         ->run();
-                    dd($output);
+                    dump($output);
                 try {
                 } catch (\Exception $exception) {
                     dd($cliString, $exception->getMessage());
