@@ -4,7 +4,7 @@ Run Symfony command line programs from a web interface, for easier debugging.
 
 ## Purpose
 
-Use assert(), dump() and dd() are quick and easy debug tools when debugging a Symfony web page.  But it's often difficult to use with console commands.
+Use assert(), dump() and dd() are quick and easy debug tools when debugging a Symfony web page.  But it's often difficult to use within the console, since the formatting is for a web page.
 
 For example, in the official Symfony Demo, there is a command to send the list of users to an email  address.
 
@@ -12,10 +12,12 @@ For example, in the official Symfony Demo, there is a command to send the list o
 bin/console app:list-users --send-to=admin@example.com
 ```
 
-Debugging this is much easier with Symfony's Debug Toolbar, so make it available by adding this bundle.
+Debugging this is much easier with Symfony's Debug Toolbar, this bundle wraps the console commands with a web interface so that the toolbar is available.
 
 ```bash
-composer req survos/command-bundle
+symfony local:new --demo  --dir=symfony-demo
+cd symfony-demo
+composer require survos/command-bundle
 ```
 
 Now go to /admin/commands and see what's available
@@ -36,19 +38,18 @@ With dumps and asserts, this is even more helpful.
 
 ## Example with Symfony Demo
 
-```bash
-symfony new --demo command-demo && cd command-demo
-# bump to the latest version of Symfony 6.3, use whatever version of you have installed
-git clone git@github.com:tacman/symfony-demo.git
-sed -i 's/"php": "8.1.0"//' composer.json 
-sed -i 's/"require": "6.3.*"/"require": "^6.4"/' composer.json
-composer config minimum-stability dev
 composer config extra.symfony.allow-contrib true
-composer update 
+composer config extra.symfony.endpoint --json '["https://raw.githubusercontent.com/symfony/recipes-contrib/flex/pull-1708/index.json", "flex://defaults"]'
+
+
+```bash
+composer create-project symfony/symfony-demo command-demo 
+cd command-demo
+sed -i 's/"php": "8.2.0"//' composer.json 
+composer config extra.symfony.allow-contrib true
 composer req survos/command-bundle
 bin/console --version
 
-yarn install && yarn dev
 symfony server:start -d
 symfony open:local  --path admin/commands
 ```

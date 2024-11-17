@@ -1,5 +1,5 @@
 survos_command:
-  prefix: /command
+  prefix: /admin/commands
   type: attribute
   resource:
     path: '@SurvosCommandBundle/src/Controller/'

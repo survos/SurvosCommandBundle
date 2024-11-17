@@ -28,7 +28,7 @@ class CommandController extends AbstractController
         $this->application = new Application($this->kernel);
     }
 
-    #[Route('/commands', name: 'survos_commands')]
+    #[Route('/list', name: 'survos_commands')]
     public function commands(): Response
     {
 
@@ -42,7 +42,7 @@ class CommandController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/run-command/{commandName}', name: 'survos_command')]
+    #[Route(path: '/run/{commandName}', name: 'survos_command')]
     public function runCommand(Request $request, KernelInterface $kernel, string $commandName): Response|array
     {
 //        $commandName = $request->get('commandName');
@@ -121,24 +121,24 @@ class CommandController extends AbstractController
             }
 
             $cliString = join(' ', $cli);
-            if ($form->get('asMessage')->getData()) {
+            if ($form->has('asMessage') && $form->get('asMessage')->getData()) {
                 $envelope = $this->bus->dispatch(new RunCommandMessage($cliString));
-                dump($envelope);
+//                dump($envelope);
                 $result = "$cliString dispatched ";
             } else {
                     CommandRunner::from($application, $cliString)
                         ->withOutput($output) // any OutputInterface
                         ->run();
-                    dump($output);
+//                    dump($output);
                 try {
                 } catch (\Exception $exception) {
-                    dd($cliString, $exception->getMessage());
+//                    dd($cliString, $exception->getMessage());
                 }
                 $result = $output->fetch();
             }
             try {
             } catch (\Exception $exception) {
-                dd($cliString, $command, $application, $exception->getMessage());
+//                dd($cliString, $command, $application, $exception->getMessage());
             }
 
 //                CommandRunner::for($command, 'Bob p@ssw0rd --role ROLE_ADMIN')->run(); // works great
