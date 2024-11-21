@@ -25,7 +25,7 @@ final class DumpTranslationsCommand extends InvokableServiceCommand
     public function __construct(
         private KernelInterface $kernel,
         private array $namespaces, // injected from the bundle config
-        #[Autowire('%kernel.name%')] private string $projectDir,
+        #[Autowire('%kernel.project_dir%')] private string $projectDir,
         string|null $name = null,
     ) {
         $this->application = new Application($this->kernel);
