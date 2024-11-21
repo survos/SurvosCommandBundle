@@ -15,7 +15,7 @@ jobs:
       - name: composer install
         run: composer install
       - name: PHPStan
-        run: composer phpstan
+        run: vendor/bin/phpstan
         env:
           REQUIRE_DEV: true
 #  cs-fixer:
