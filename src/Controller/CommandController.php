@@ -23,7 +23,8 @@ class CommandController extends AbstractController
     public function __construct(private KernelInterface $kernel,
                                 private ?MessageBusInterface $bus=null,
                                 private array $namespaces=[],
-                                private array $config=[])
+                                private array $config=[]
+    )
     {
         $this->application = new Application($this->kernel);
     }
@@ -130,16 +131,16 @@ class CommandController extends AbstractController
                         ->withOutput($output) // any OutputInterface
                         ->run();
 //                    dump($output);
-                try {
-                } catch (\Exception $exception) {
-//                    dd($cliString, $exception->getMessage());
-                }
+//                try {
+//                } catch (\Exception $exception) {
+////                    dd($cliString, $exception->getMessage());
+//                }
                 $result = $output->fetch();
             }
-            try {
-            } catch (\Exception $exception) {
-//                dd($cliString, $command, $application, $exception->getMessage());
-            }
+//            try {
+//            } catch (\Exception $exception) {
+////                dd($cliString, $command, $application, $exception->getMessage());
+//            }
 
 //                CommandRunner::for($command, 'Bob p@ssw0rd --role ROLE_ADMIN')->run(); // works great
         }
@@ -150,6 +151,7 @@ class CommandController extends AbstractController
 //        CommandRunner::for($command, '--help')->run(); // fails, says --help isn't defined
 
         return $this->render('@SurvosCommand/run.html.twig', [
+            'base' => $this->config['base_layout'],
             'cliString' => $cliString,
             'form' => $form->createView(),
             'result' => $result,
