@@ -3,7 +3,6 @@
 namespace Survos\CommandBundle\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
 use Zenstruck\Console\Attribute\Option;
@@ -22,15 +21,13 @@ final class DumpTranslationsCommand extends InvokableServiceCommand
 
     private Application $application;
 
-    public function __construct(
-        private KernelInterface $kernel,
-        private array $namespaces, // injected from the bundle config
-        #[Autowire('%kernel.name%')] private string $projectDir,
-        string|null $name = null,
-    ) {
-        $this->application = new Application($this->kernel);
-        parent::__construct($name);
-    }
+        public function __construct(private KernelInterface $kernel,
+                                    private array $namespaces, // injected from the bundle config
+                                    string $name = null)
+        {
+            $this->application = new Application($this->kernel);
+            parent::__construct($name);
+        }
 
     public function __invoke(
         IO $io,
@@ -51,7 +48,9 @@ final class DumpTranslationsCommand extends InvokableServiceCommand
             }
         }
 
-        file_put_contents($fn = $this->projectDir . sprintf('/translations/commands.%s.yaml', 'en'), Yaml::dump($messages));
+        $fn = $this->kernel->getProjectDir();
+        file_put_contents($fn . sprintf('/translations/commands.%s.yaml', 'en'), Yaml::dump($messages));
+
         $io->success(sprintf('File %s written', $fn));
     }
 }
