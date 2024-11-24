@@ -1,21 +1,22 @@
-name: bundle-CI
+name: seo-bundle
+
 on:
   [push, pull_request]
+
 jobs:
-#  cs-fixer:
+#  coding-style:
 #    runs-on: ubuntu-latest
-#    name: PHP-CS-Fixer
 #    steps:
-#      - name: Setup PHP
-#        uses: shivammathur/setup-php@v2
+#      - uses: actions/checkout@v4
+#      - uses: shivammathur/setup-php@v2
 #        with:
-#          php-version: 8.2
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#      - name: composer install
-#        run: composer install
-##      - name: CS Check
-##        run: composer cs-check
+#          php-version: '8.2'
+#          coverage: none
+#      - name: php-cs-fixer
+#        run: |
+#          wget https://github.com/FriendsOfPHP/PHP-CS-Fixer/releases/download/v3.13.2/php-cs-fixer.phar -q
+#          php php-cs-fixer.phar fix --dry-run --diff
+
   phpunit:
     name: PHPUnit (PHP ${{ matrix.php-version }} - Symfony ${{ matrix.symfony-version }})
     runs-on: ubuntu-latest
@@ -30,6 +31,11 @@ jobs:
         symfony-version:
           - '6.4.*'
           - '7.1.*'
+#        include:
+#          - php-version: '8.3'
+#            symfony-version: '6.4.*'
+#          - php-version: '8.3'
+#            symfony-version: '7.1.*'
 
     steps:
       - name: Checkout code
@@ -49,6 +55,5 @@ jobs:
       - name: Install Composer dependencies
         uses: ramsey/composer-install@v3
 
-#      - name: Run Unit
-#        run: composer phpunit
-
+#      - name: Run PHPUnit
+#        run: vendor/bin/phpunit
