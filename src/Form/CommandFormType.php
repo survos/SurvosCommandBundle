@@ -29,7 +29,7 @@ class CommandFormType extends AbstractType
                     'help' => $argument->getDescription(),
                     'required' => $argument->isRequired(),
                     'attr' => [
-                        'placeholder' => is_array($default) ? join(',', $default) : $default,
+                        'placeholder' => is_array($default) ? implode(',', $default) : $default,
 
                     ]
                 ]);

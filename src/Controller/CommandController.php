@@ -18,11 +18,11 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class CommandController extends AbstractController
 {
 
-    private Application $application;
+    private readonly Application $application;
 
-    public function __construct(private KernelInterface $kernel,
-                                private ?MessageBusInterface $bus=null,
-                                private array $namespaces=[],
+    public function __construct(private readonly KernelInterface $kernel,
+                                private readonly ?MessageBusInterface $bus=null,
+                                private readonly array $namespaces=[],
                                 private array $config=[]
     )
     {
@@ -121,7 +121,7 @@ class CommandController extends AbstractController
                 }
             }
 
-            $cliString = join(' ', $cli);
+            $cliString = implode(' ', $cli);
             if ($form->has('asMessage') && $form->get('asMessage')->getData()) {
                 $envelope = $this->bus->dispatch(new RunCommandMessage($cliString));
 //                dump($envelope);
@@ -162,6 +162,7 @@ class CommandController extends AbstractController
     private function quotify(string|int|null $value): string
 
     {
+        $value = (string)$value;
         return str_contains($value, ' ') ? sprintf('"%s"', $value) : (string)$value;
     }
 }

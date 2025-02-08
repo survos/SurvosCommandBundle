@@ -5,7 +5,7 @@ namespace Survos\WebCliBundle\Service;
 
 class WebCliService
 {
-    public function __construct(private string $title) {
+    public function __construct(private readonly string $title) {
 
     }
 
