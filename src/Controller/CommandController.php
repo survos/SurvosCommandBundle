@@ -29,7 +29,7 @@ class CommandController extends AbstractController
         $this->application = new Application($this->kernel);
     }
 
-    #[Route('/list', name: 'survos_commands')]
+    #[Route('/', name: 'survos_commands')]
     public function commands(): Response
     {
 

@@ -3,23 +3,17 @@
 namespace Survos\CommandBundle\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Attribute\Option;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Yaml\Yaml;
-use Zenstruck\Console\Attribute\Option;
-use Zenstruck\Console\ConfigureWithAttributes;
-use Zenstruck\Console\InvokableServiceCommand;
-use Zenstruck\Console\IO;
-use Zenstruck\Console\RunsCommands;
-use Zenstruck\Console\RunsProcesses;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 #[AsCommand('survos:command:dump-as-messages', 'Dump the command descriptions as a message for file translations')]
-final class DumpTranslationsCommand extends InvokableServiceCommand
+final class DumpTranslationsCommand extends Command
 {
-    use RunsCommands;
-    use RunsProcesses;
-
     private Application $application;
 
     public function __construct(
@@ -33,7 +27,7 @@ final class DumpTranslationsCommand extends InvokableServiceCommand
     }
 
     public function __invoke(
-        IO $io,
+        SymfonyStyle $io,
         #[Option(description: 'The namespace(s) to dump (defaults to config value)')]
         string $namespace = 'app',
     ): void {
