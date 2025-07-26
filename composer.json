@@ -5,6 +5,7 @@
     "type": "symfony-bundle",
     "keywords": [
         "cli",
+        "dev",
         "symfony-console"
     ],
     "authors": [
@@ -15,20 +16,20 @@
     ],
     "require": {
         "php": "^8.3",
-        "symfony/config": "^6.4 || ^7.1",
-        "symfony/console": "^6.4 || ^7.1",
-        "symfony/dependency-injection": "^6.4 || ^7.1",
-        "symfony/form": "^6.4 || ^7.1",
-        "symfony/framework-bundle": "^6.4 || ^7.1",
-        "symfony/http-kernel": "^6.4 || ^7.1",
+        "symfony/config": "^7.3",
+        "symfony/console": "^7.3",
+        "symfony/dependency-injection": "^7.3",
+        "symfony/form": "^7.3",
+        "symfony/framework-bundle": "^7.3",
+        "symfony/http-kernel": "^7.3",
         "twig/twig": "^3.4"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.0",
         "phpunit/phpunit": "^11.4",
-        "symfony/messenger": "^6.4 || ^7.1",
+        "symfony/messenger": "^7.3",
         "symfony/test-pack": "^1.0",
-        "symfony/yaml": "^6.4 || ^7.1",
+        "symfony/yaml": "^7.3",
         "rector/rector": "^2.0",
         "zenstruck/console-extra": "^1.4"
     },
