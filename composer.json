@@ -22,7 +22,7 @@
         "symfony/form": "^7.3",
         "symfony/framework-bundle": "^7.3",
         "symfony/http-kernel": "^7.3",
-        "twig/twig": "^3.4"
+        "twig/twig": "^3.21"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.0",
