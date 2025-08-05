@@ -5,10 +5,7 @@ parameters:
         - ./src/
         - ./tests
     excludePaths:
-#      - 'src/Resources/skeleton'
-#      - */cache/*
-       analyse:
-          - ./vendor (?)
+      - './tests/project-dir'
     reportUnmatchedIgnoredErrors: false
 #    checkMissingIterableValueType: false
 #    checkGenericClassInNonGenericObjectType: false
